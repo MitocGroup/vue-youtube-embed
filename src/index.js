@@ -119,33 +119,35 @@ export const YouTubePlayer = {
       this.player[name](videoId)
     }
   },
-  ready() {
-    container.register((YouTube) => {
-      const {
-        playerHeight : height = '390',
-        playerWidth : width = '640',
-        playerVars = {autoplay: 0, start: 0},
-        videoId
-      } = this
+  mounted() {
+    this.$nextTick(function () {    
+      container.register((YouTube) => {
+        const {
+          playerHeight : height = '390',
+          playerWidth : width = '640',
+          playerVars = {autoplay: 0, start: 0},
+          videoId
+        } = this
 
-      this.player = new YouTube.Player(this.elementId, {
-        height,
-        width,
-        playerVars,
-        videoId,
-        events: {
-          onReady: (event) => {
-            this.$emit('ready', event.target)
-          },
-          onStateChange: (event) => {
-            if (event.data !== -1) {
-              this.$emit(events[event.data], event.target)
+        this.player = new YouTube.Player(this.elementId, {
+          height,
+          width,
+          playerVars,
+          videoId,
+          events: {
+            onReady: (event) => {
+              this.$emit('ready', event.target)
+            },
+            onStateChange: (event) => {
+              if (event.data !== -1) {
+                this.$emit(events[event.data], event.target)
+              }
+            },
+            onError: (event) => {
+              this.$emit('error', event.target)
             }
-          },
-          onError: (event) => {
-            this.$emit('error', event.target)
           }
-        }
+        })
       })
     })
   },
